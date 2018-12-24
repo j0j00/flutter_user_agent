@@ -150,7 +150,7 @@
 {
     UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
     NSString * webViewUserAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-    [webView release];
+    // Do we need to free up the webView?
     return webViewUserAgent;
 }
 
