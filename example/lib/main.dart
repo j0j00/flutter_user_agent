@@ -26,8 +26,8 @@ class _MyAppState extends State<MyApp> {
     String userAgent, webViewUserAgent;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
+      userAgent = await FlutterUserAgent.getPropertyAsync('userAgent');
       await FlutterUserAgent.init();
-      userAgent = FlutterUserAgent.userAgent;
       webViewUserAgent = FlutterUserAgent.webViewUserAgent;
       print('''
 applicationVersion => ${FlutterUserAgent.getProperty('applicationVersion')}
