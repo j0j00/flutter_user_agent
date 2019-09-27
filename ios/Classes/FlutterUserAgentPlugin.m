@@ -149,15 +149,23 @@
 
 }
 
-- (void)getWebViewUserAgent:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
+- (void)getWebViewUserAgent:(void (^ _Nullable)(NSString * _Nullable webViewUserAgent, NSError * _Nullable error))completionHandler
 {
-    if (self.webView == nil) {
-        // retain because `evaluateJavaScript:` is asynchronous
-        self.webView = [[WKWebView alloc] init];
+    if (@available(ios 8.0, *)) {
+        if (self.webView == nil) {
+            // retain because `evaluateJavaScript:` is asynchronous
+            self.webView = [[WKWebView alloc] init];
+        }
+        // Not sure if this is really neccesary
+        [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
+        
+        [self.webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
+    } else {
+        UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+        NSString * webViewUserAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        // Do we need to free up the webView?
+        completionHandler(webViewUserAgent, nil);
     }
-    
-    [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
-    [self.webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
 }
 
 - (void)constantsToExport:(void  (^ _Nullable)(NSDictionary * _Nonnull constants))completionHandler
@@ -173,8 +181,7 @@
 
     NSString *userAgent = [NSString stringWithFormat:@"CFNetwork/%@ Darwin/%@ (%@ %@/%@)", cfnVersion, darwinVersion, deviceName, currentDevice.systemName, currentDevice.systemVersion];
 
-    [self getWebViewUserAgent:^(id _Nullable webViewUserAgent, NSError * _Nullable error) {
-        NSLog(@"%@", webViewUserAgent);
+    [self getWebViewUserAgent:^(NSString * _Nullable webViewUserAgent, NSError * _Nullable error) {
         completionHandler(@{
           @"isEmulator": @(self.isEmulator),
           @"systemName": currentDevice.systemName,
@@ -190,7 +197,6 @@
           @"webViewUserAgent": webViewUserAgent ?: [NSNull null]
         });
     }];
-
 }
 
 @end
