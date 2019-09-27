@@ -1,5 +1,4 @@
 #import "FlutterUserAgentPlugin.h"
-#import <WebKit/WebKit.h>
 
 @implementation FlutterUserAgentPlugin
 
@@ -22,6 +21,7 @@
 }
 
 @synthesize isEmulator;
+@synthesize webView;
 
 //eg. Darwin/16.3.0
 - (NSString *)darwinVersion
@@ -151,8 +151,13 @@
 
 - (void)getWebViewUserAgent:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler;
 {
-    WKWebView* webView = [[WKWebView alloc] init];
-    [webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
+    if (self.webView == nil) {
+        // retain because `evaluateJavaScript:` is asynchronous
+        self.webView = [[WKWebView alloc] init];
+    }
+    
+    [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
+    [self.webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
 }
 
 - (void)constantsToExport:(void  (^ _Nullable)(NSDictionary * _Nonnull constants))completionHandler
@@ -169,6 +174,7 @@
     NSString *userAgent = [NSString stringWithFormat:@"CFNetwork/%@ Darwin/%@ (%@ %@/%@)", cfnVersion, darwinVersion, deviceName, currentDevice.systemName, currentDevice.systemVersion];
 
     [self getWebViewUserAgent:^(id _Nullable webViewUserAgent, NSError * _Nullable error) {
+        NSLog(@"%@", webViewUserAgent);
         completionHandler(@{
           @"isEmulator": @(self.isEmulator),
           @"systemName": currentDevice.systemName,
@@ -184,6 +190,7 @@
           @"webViewUserAgent": webViewUserAgent ?: [NSNull null]
         });
     }];
+
 }
 
 @end
