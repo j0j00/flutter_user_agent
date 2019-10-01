@@ -12,13 +12,16 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getProperties" isEqualToString:call.method]) {
-    result([self constantsToExport]);
+      [self constantsToExport:^(NSDictionary * _Nonnull constants) {
+          result(constants);
+      }];
   } else {
     result(FlutterMethodNotImplemented);
   }
 }
 
 @synthesize isEmulator;
+@synthesize webView;
 
 //eg. Darwin/16.3.0
 - (NSString *)darwinVersion
@@ -146,15 +149,26 @@
 
 }
 
-- (NSString *)getWebViewUserAgent
+- (void)getWebViewUserAgent:(void (^ _Nullable)(NSString * _Nullable webViewUserAgent, NSError * _Nullable error))completionHandler
 {
-    UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-    NSString * webViewUserAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-    // Do we need to free up the webView?
-    return webViewUserAgent;
+    if (@available(ios 8.0, *)) {
+        if (self.webView == nil) {
+            // retain because `evaluateJavaScript:` is asynchronous
+            self.webView = [[WKWebView alloc] init];
+        }
+        // Not sure if this is really neccesary
+        [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
+        
+        [self.webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
+    } else {
+        UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+        NSString * webViewUserAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        // Do we need to free up the webView?
+        completionHandler(webViewUserAgent, nil);
+    }
 }
 
-- (NSDictionary *)constantsToExport
+- (void)constantsToExport:(void  (^ _Nullable)(NSDictionary * _Nonnull constants))completionHandler
 {
     UIDevice *currentDevice = [UIDevice currentDevice];
 
@@ -167,20 +181,22 @@
 
     NSString *userAgent = [NSString stringWithFormat:@"CFNetwork/%@ Darwin/%@ (%@ %@/%@)", cfnVersion, darwinVersion, deviceName, currentDevice.systemName, currentDevice.systemVersion];
 
-    return @{
-             @"isEmulator": @(self.isEmulator),
-             @"systemName": currentDevice.systemName,
-             @"systemVersion": currentDevice.systemVersion,
-             @"applicationName": appName,
-             @"applicationVersion": appVersion,
-             @"buildNumber": buildNumber,
-             @"darwinVersion": darwinVersion,
-             @"cfnetworkVersion": cfnVersion,
-             @"deviceName": deviceName,
-             @"packageUserAgent": [NSString stringWithFormat:@"%@/%@.%@ %@)", appName, appVersion, buildNumber, userAgent],
-             @"userAgent": userAgent,
-             @"webViewUserAgent": self.getWebViewUserAgent ?: [NSNull null]
-           };
+    [self getWebViewUserAgent:^(NSString * _Nullable webViewUserAgent, NSError * _Nullable error) {
+        completionHandler(@{
+          @"isEmulator": @(self.isEmulator),
+          @"systemName": currentDevice.systemName,
+          @"systemVersion": currentDevice.systemVersion,
+          @"applicationName": appName,
+          @"applicationVersion": appVersion,
+          @"buildNumber": buildNumber,
+          @"darwinVersion": darwinVersion,
+          @"cfnetworkVersion": cfnVersion,
+          @"deviceName": deviceName,
+          @"packageUserAgent": [NSString stringWithFormat:@"%@/%@.%@ %@)", appName, appVersion, buildNumber, userAgent],
+          @"userAgent": userAgent,
+          @"webViewUserAgent": webViewUserAgent ?: [NSNull null]
+        });
+    }];
 }
 
 @end
