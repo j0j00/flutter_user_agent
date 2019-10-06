@@ -160,11 +160,6 @@
         [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
         
         [self.webView evaluateJavaScript:@"navigator.userAgent" completionHandler:completionHandler];
-    } else {
-        UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        NSString * webViewUserAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-        // Do we need to free up the webView?
-        completionHandler(webViewUserAgent, nil);
     }
 }
 
