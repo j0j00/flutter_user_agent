@@ -1,5 +1,15 @@
 # flutter_user_agent version history
 
+## 1.2.0
+
+* iOS deprecation API change.
+
+    > ITMS-90809: Deprecated API Usage - Apple will stop accepting submissions of apps that use UIWebView APIs . See https://developer.apple.com/documentation/uikit/uiwebview for more information.
+                           
+  - Remove references to `UIWebView` as it's deprecated and currently stops app submissions to the App Store - [#3](https://github.com/j0j00/flutter_user_agent/issues/3) (thanks [@rodruiz](https://github.com/rodruiz)!)
+  
+  - The plugin will only work on iOS 8 and up.
+
 ## 1.1.0
 
 * iOS API change for compatibility purposes.
