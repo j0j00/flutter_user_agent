@@ -120,6 +120,13 @@
             @"iPhone10,5":@"iPhone/8_Plus",      // (model A1897)
             @"iPhone10,3":@"iPhone/X",           // (model A1865, A1902)
             @"iPhone10,6":@"iPhone/X",           // (model A1901)
+            @"iPhone11,2":@"iPhone XS",
+            @"iPhone11,4":@"iPhone XS Max",
+            @"iPhone11,6":@"iPhone XS Max Global",
+            @"iPhone11,8":@"iPhone XR",
+            @"iPhone12,1":@"iPhone 11",
+            @"iPhone12,3":@"iPhone 11 Pro",
+            @"iPhone12,5":@"iPhone 11 Pro Max",
             @"AppleTV2,1":@"AppleTV",            // Apple TV (2nd Generation)
             @"AppleTV3,1":@"AppleTV",            // Apple TV (3rd Generation)
             @"AppleTV3,2":@"AppleTV",            // Apple TV (3rd Generation - Rev A)
