@@ -1,5 +1,9 @@
 # flutter_user_agent version history
 
+## 1.2.1
+
+* iOS user-agent database update. Specifically the iPhone XS, XR and 11 variants (thanks [@pravinarr](https://github.com/pravinarr)!)
+
 ## 1.2.0
 
 * iOS deprecation API change.
