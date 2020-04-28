@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_user_agent'
-  s.version          = '1.2.1'
+  s.version          = '1.2.2'
   s.summary          = 'Retrieve user-agent properties.'
   s.description      = <<-DESC
 Retrieve user-agent properties
