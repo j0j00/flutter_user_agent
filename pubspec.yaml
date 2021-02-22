@@ -2,11 +2,12 @@ name: flutter_user_agent
 description: Retrieve device and webview user agent strings for Android and iOS devices.
 
   It also provides you with simple building blocks for generating your own user agent string.
-version: 1.2.2
+version: 1.2.3
 homepage: https://github.com/j0j00/flutter_user_agent
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.20.0"
 
 dependencies:
   flutter:
@@ -14,5 +15,9 @@ dependencies:
 
 flutter:
   plugin:
-    androidPackage: io.jojodev.flutter.flutteruseragent
-    pluginClass: FlutterUserAgentPlugin
+    platforms:
+      android:
+        package: io.jojodev.flutter.flutteruseragent
+        pluginClass: FlutterUserAgentPlugin
+      ios:
+        pluginClass: FlutterUserAgentPlugin
