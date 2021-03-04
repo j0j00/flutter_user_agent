@@ -12,8 +12,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _userAgent = '<unknown>';
-  String _webUserAgent = '<unknown>';
+  String? _userAgent = '<unknown>';
+  String? _webUserAgent = '<unknown>';
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initUserAgentState() async {
-    String userAgent, webViewUserAgent;
+    String? userAgent, webViewUserAgent;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       userAgent = await FlutterUserAgent.getPropertyAsync('userAgent');
