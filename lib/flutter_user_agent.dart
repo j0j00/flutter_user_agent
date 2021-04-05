@@ -16,7 +16,7 @@ class FlutterUserAgent {
   static Future init({force: false}) async {
     if (_properties == null || force) {
       _properties =
-          Map.unmodifiable(await (_channel.invokeMethod('getProperties') as FutureOr<Map<dynamic, dynamic>>));
+          Map.unmodifiable(await _channel.invokeMethod('getProperties'));
     }
   }
 
