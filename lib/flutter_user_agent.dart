@@ -15,8 +15,10 @@ class FlutterUserAgent {
   /// the native platform.
   static Future init({force: false}) async {
     if (_properties == null || force) {
+      Map<dynamic, dynamic> properties= (await _channel.invokeMethod('getProperties'));
+      print(Map.unmodifiable(properties));
       _properties =
-          Map.unmodifiable(await (_channel.invokeMethod('getProperties') as FutureOr<Map<dynamic, dynamic>>));
+          Map.unmodifiable(Map<String, dynamic>.from(properties)) ;
     }
   }
 
@@ -28,23 +30,23 @@ class FlutterUserAgent {
 
   /// Returns the device's user agent.
   static String? get userAgent {
-    return _properties!['userAgent'];
+    return _properties!['userAgent'].toString();
   }
 
   /// Returns the device's webview user agent.
   static String? get webViewUserAgent {
-    return _properties!['webViewUserAgent'];
+    return _properties!['webViewUserAgent'].toString();
   }
 
   /// Fetch a [property] that can be used to build your own user agent string.
-  static dynamic getProperty(String property) {
-    return _properties![property];
+  static String getProperty(String property) {
+    return _properties![property].toString();
   }
 
   /// Fetch a [property] asynchronously that can be used to build your own user agent string.
-  static dynamic getPropertyAsync(String property) async {
+  static Future<String> getPropertyAsync(String property) async {
     await init();
-    return _properties![property];
+    return _properties![property].toString();
   }
 
   /// Return a map of properties that can be used to generate the user agent string.
