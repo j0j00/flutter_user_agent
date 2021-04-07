@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 class FlutterUserAgent {
   static const MethodChannel _channel = MethodChannel('flutter_user_agent');
 
-  static Map<String, dynamic> _properties;
+  static Map<String, dynamic>? _properties;
 
   /// Initialize the module.
   ///
@@ -15,8 +15,10 @@ class FlutterUserAgent {
   /// the native platform.
   static Future init({force: false}) async {
     if (_properties == null || force) {
+      Map<dynamic, dynamic> properties= (await _channel.invokeMethod('getProperties'));
+      print(Map.unmodifiable(properties));
       _properties =
-          Map.unmodifiable(await _channel.invokeMethod('getProperties'));
+          Map.unmodifiable(Map<String, dynamic>.from(properties)) ;
     }
   }
 
@@ -27,28 +29,28 @@ class FlutterUserAgent {
   }
 
   /// Returns the device's user agent.
-  static String get userAgent {
-    return _properties['userAgent'];
+  static String? get userAgent {
+    return _properties!['userAgent'].toString();
   }
 
   /// Returns the device's webview user agent.
-  static String get webViewUserAgent {
-    return _properties['webViewUserAgent'];
+  static String? get webViewUserAgent {
+    return _properties!['webViewUserAgent'].toString();
   }
 
   /// Fetch a [property] that can be used to build your own user agent string.
-  static dynamic getProperty(String property) {
-    return _properties[property];
+  static String getProperty(String property) {
+    return _properties![property].toString();
   }
 
   /// Fetch a [property] asynchronously that can be used to build your own user agent string.
-  static dynamic getPropertyAsync(String property) async {
+  static Future<String> getPropertyAsync(String property) async {
     await init();
-    return _properties[property];
+    return _properties![property].toString();
   }
 
   /// Return a map of properties that can be used to generate the user agent string.
-  static Map<String, dynamic> get properties {
+  static Map<String, dynamic>? get properties {
     return _properties;
   }
 }
